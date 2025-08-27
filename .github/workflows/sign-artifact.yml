@@ -5,7 +5,7 @@ on:
     branches: [ "main" ]
 
 permissions:
-  id-token: write   # Required for OIDC
+  id-token: write   # Required for OIDC keyless signing
   contents: read
 
 jobs:
@@ -37,6 +37,8 @@ jobs:
         cosign verify-blob \
           --signature artifact.sig \
           --certificate artifact.pem \
+          --certificate-identity "https://github.com/${{ github.repository }}/.github/workflows/sign-artifact.yml@refs/heads/main" \
+          --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
           artifact.tar.gz
 
     - name: Upload signed files
